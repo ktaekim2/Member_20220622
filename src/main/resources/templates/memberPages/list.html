@@ -5,6 +5,25 @@
     <title>Title</title>
 </head>
 <body>
-
+<h2>list.html</h2>
+세션값확인: <p th:text="${session['loginEmail']}"></p>
+<table>
+<tr>
+    <th>이메일</th>
+    <th>비밀번호</th>
+    <th>이름</th>
+    <th>나이</th>
+    <th>전화번호</th>
+    <th>상세조회</th>
+</tr>
+<tr th:each="member: ${memberList}">
+    <td th:text="${member.memberEmail}"></td>
+    <td th:text="${member.memberPassword}"></td>
+    <td th:text="${member.memberName}"></td>
+    <td th:text="${member.memberAge}"></td>
+    <td th:text="${member.memberPhone}"></td>
+    <td><a th:href="@{|/member/${member.id}|}">조회</a></td>
+</tr>
+</table>
 </body>
 </html>
