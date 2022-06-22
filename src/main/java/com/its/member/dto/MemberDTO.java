@@ -1,13 +1,11 @@
 package com.its.member.dto;
 
 import com.its.member.entity.MemberEntity;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor // 모든 매개변수를 가진 생성자
-@NoArgsConstructor // 매개변수가 없는 생성자
 @Data
+@NoArgsConstructor
 public class MemberDTO {
     private Long id;
     private String memberEmail;
@@ -24,4 +22,13 @@ public class MemberDTO {
         this.memberPhone = memberPhone;
     }
 
+    public static MemberDTO toDTO(MemberEntity memberEntity) {
+    MemberDTO memberDTO = new MemberDTO();
+    memberDTO.setMemberEmail(memberEntity.getMemberEmail());
+    memberDTO.setMemberPassword(memberEntity.getMemberPassword());
+    memberDTO.setMemberName(memberEntity.getMemberName());
+    memberDTO.setMemberAge(memberEntity.getMemberAge());
+    memberDTO.setMemberPhone(memberEntity.getMemberPhone());
+    return memberDTO;
+    }
 }
