@@ -31,4 +31,16 @@ public class MemberService {
             return null;
         }
     }
+
+    public MemberDTO login(String memberEmail, String memberPassword) {
+        MemberEntity memberEntity = memberRepository.findByMemberEmailAndMemberPassword(memberEmail, memberPassword);
+        if (memberEntity != null) {
+            System.out.println("로그인 성공");
+            MemberDTO memberDTO = MemberDTO.toDTO(memberEntity);
+            return memberDTO;
+        } else {
+            System.out.println("로그인 실패");
+            return null;
+        }
+    }
 }

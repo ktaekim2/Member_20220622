@@ -4,10 +4,10 @@ import com.its.member.dto.MemberDTO;
 import com.its.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.lang.reflect.Member;
 
 @Controller
 @RequestMapping("/member")
@@ -22,12 +22,22 @@ public class MemberController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute MemberDTO memberDTO) {
-        Long saveId = memberService.save(memberDTO);
+        memberService.save(memberDTO);
         return "index";
     }
 
     @GetMapping("/login-form")
     public String loginForm() {
         return "/memberPages/login";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestParam String memberEmail, @RequestParam String memberPassword, HttpSession session) {
+        MemberDTO memberDTO = memberService.login(memberEmail, memberPassword);
+        if (memberDTO != null) {
+            session.setAttribute("loginEmail", memberDTO.getMemberEmail());
+            return "/memberPages/main";
+        } else
+            return null;
     }
 }

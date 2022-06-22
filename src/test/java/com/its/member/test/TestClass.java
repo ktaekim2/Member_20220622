@@ -22,4 +22,17 @@ public class TestClass {
         MemberDTO findDTO = memberService.findById(saveId);
         assertThat(memberDTO).isEqualTo(findDTO);
     }
+
+    @Test
+    @Transactional
+    @Rollback(value = true)
+    public void loginTest() {
+        MemberDTO memberDTO = new MemberDTO("test@email.com", "testpassword", "testname", 20, "010-2323-2222");
+        Long saveId = memberService.save(memberDTO);
+        MemberDTO findDTO = memberService.findById(saveId);
+        String memberEmail = findDTO.getMemberEmail();
+        String memberPassword = findDTO.getMemberPassword();
+        MemberDTO loginDTO = memberService.login(memberEmail, memberPassword);
+        assertThat(findDTO).isEqualTo(loginDTO);
+    }
 }
