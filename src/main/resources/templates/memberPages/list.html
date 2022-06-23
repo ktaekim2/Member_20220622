@@ -1,29 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <h2>list.html</h2>
 세션값확인: <p th:text="${session['loginEmail']}"></p>
-<table>
-<tr>
-    <th>이메일</th>
-    <th>비밀번호</th>
-    <th>이름</th>
-    <th>나이</th>
-    <th>전화번호</th>
-    <th>상세조회</th>
-</tr>
-<tr th:each="member: ${memberList}">
-    <td th:text="${member.memberEmail}"></td>
-    <td th:text="${member.memberPassword}"></td>
-    <td th:text="${member.memberName}"></td>
-    <td th:text="${member.memberAge}"></td>
-    <td th:text="${member.memberPhone}"></td>
-    <td><a th:href="@{|/member/${member.id}|}">조회</a></td>
-</tr>
-</table>
+세션값확인: <p th:text="${session['id']}"></p>
+<div id="table">
+    <table>
+        <tr>
+            <th>이메일</th>
+            <th>비밀번호</th>
+            <th>이름</th>
+            <th>나이</th>
+            <th>전화번호</th>
+            <th>상세조회</th>
+            <th>ajax상세조회</th>
+            <th>삭제</th>
+            <th>ajax삭제</th>
+        </tr>
+        <tr th:each="member: ${memberList}">
+            <td th:text="${member.memberEmail}"></td>
+            <td th:text="${member.memberPassword}"></td>
+            <td th:text="${member.memberName}"></td>
+            <td th:text="${member.memberAge}"></td>
+            <td th:text="${member.memberPhone}"></td>
+            <td><a th:href="@{|/member/${member.id}|}">조회</a></td>
+            <td>
+                <button th:onclick="detail([[${member.id}]])">ajax조회</button>
+            </td>
+            <td><a th:href="@{|/member/delete/${member.id}|}">삭제</a></td>
+            <!--        삭제 요청을 ajax로. type을 delete로 하고
+            controller에서 @DeleteMapping을 사용(삭제 코드는 동일)-->
+            <td>
+                <button th:onclick="deleteById([[${member.id}]])">ajax삭제</button>
+            </td>
+            <!--    빨간줄 뜨지만 에러 안남-->
+        </tr>
+    </table>
+</div>
+<div id="member-detail"></div>
 </body>
+<script th:inline="javascript"> // js안에서 model 객체 사용할 때 유용
+const detail = (id) => {
+    $.ajax({
+        type: "post",
+        url: "/member/ajax/" + id,
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            let output = "<table>";
+            output += "<tr><th>이메일</th>";
+            output += "<th>비밀번호</th>";
+            output += "<th>이름</th>";
+            output += "<th>나이</th>";
+            output += "<th>전화번호</th>";
+            output += "<tr>";
+            output += "<td>" + result.memberEmail + "</td>";
+            output += "<td>" + result.memberPassword + "</td>";
+            output += "<td>" + result.memberName + "</td>";
+            output += "<td>" + result.memberAge + "</td>";
+            output += "<td>" + result.memberPhone + "</td>";
+            output += "</tr>";
+            output += "</table>";
+            document.getElementById("member-detail").innerHTML = output;
+        },
+        error: function () {
+            alert("어디가 틀렸을까");
+        }
+    })
+}
+
+// ajax삭제
+const deleteById = (id) => {
+    $.ajax({
+        type: "delete",
+        url: "/member/" + id,
+        // dataType: "text",
+        success: function () { // 성공: status code = 200
+            location.href = "/member/";
+        },
+        error: function () { // 에러: status code = 400
+            alert("ajax에러");
+        }
+    })
+}
+</script>
 </html>

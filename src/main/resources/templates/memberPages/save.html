@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <h2>save.html</h2>
-<form action="/member/save" method="post">
-    이메일<input type="email" name="memberEmail"><br>
+<form action="/member/save" method="post" name="submitForm">
+    이메일<input type="email" name="memberEmail" onblur="duplicateCheck()" id="memberEmail"><br>
+    <p id="checkResult"></p>
     비밀번호<input type="password" name="memberPassword"><br>
     이름<input type="text" name="memberName"><br>
     나이<input type="number" name="memberAge"><br>
@@ -15,4 +19,24 @@
     <input type="submit" value="저장"><br>
 </form>
 </body>
+<script>
+    const duplicateCheck = () => {
+        const memberEmail = document.getElementById("memberEmail").value;
+        const checkResult = document.getElementById("checkResult");
+        $.ajax({
+            type: "post",
+            url: "/member/duplicate-check",
+            data: {"memberEmail": memberEmail},
+            dataType: "text",
+            success: function () {
+                checkResult.innerHTML = "사용가능한 아이디";
+                checkResult.style.color = "green";
+            },
+            error: function () {
+                checkResult.innerHTML = "이미 사용중인 아이디";
+                checkResult.style.color = "red";
+            }
+        });
+    }
+</script>
 </html>

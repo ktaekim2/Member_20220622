@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Member;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*; // assertj: java에서 제공하는 테스트 프레임워크
@@ -74,5 +73,20 @@ public class MemberTest {
         IntStream.rangeClosed(1, 20).forEach(i -> {
             memberService.save(newMember(i));
         });
+    }
+
+    @Test
+    @DisplayName("회원 삭제 테스트")
+    @Transactional
+    @Rollback(value = true)
+    public void memberDeleteTest() {
+        /**
+         * 신규 회원 등록
+         * 삭제 처리
+         * 해당 회원으로 조회시 null 이면 통과
+         */
+        Long saveId = memberService.save(newMember(999));
+        memberService.deleteById(saveId);
+        assertThat(memberService.findById(saveId)).isNull();
     }
 }

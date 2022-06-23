@@ -53,6 +53,7 @@ public class MemberService {
         if (optionalMemberEntity.isPresent()) {
             MemberEntity loginEntity = optionalMemberEntity.get();
             if (loginEntity.getMemberPassword().equals(memberDTO.getMemberPassword())) {
+                memberRepository.findByMemberEmail(loginEntity.getMemberEmail());
                 return MemberDTO.toMemberDTO(loginEntity);
             } else {
                 return null; // 비밀번호 불일치
@@ -70,5 +71,23 @@ public class MemberService {
             memberDTOList.add(memberDTO);
         }
         return memberDTOList;
+    }
+
+    public void deleteById(Long id) {
+        memberRepository.deleteById(id);
+    }
+
+    public void update(MemberDTO memberDTO) {
+        MemberEntity memberEntity = MemberEntity.toUpdateEntity(memberDTO);
+        memberRepository.save(memberEntity);
+    }
+
+    public boolean duplicateCheck(String memberEmail) {
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByMemberEmail(memberEmail);
+        if (optionalMemberEntity.isPresent()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

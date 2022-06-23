@@ -3,8 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
 </head>
 <body>
-
+<h2>update.html</h2>
+<form action="/member/update" method="post" name="updateForm">
+    회원번호<input type="hidden" name="id" th:value="${member.id}" readonly><br>
+    이메일<input type="email" name="memberEmail" th:value="${member.memberEmail}" readonly><br>
+    비밀번호<input type="password" name="memberPassword" th:value="${member.memberPassword}" id="memberPassword" readonly><br>
+    이름<input type="text" name="memberName" th:value="${member.memberName}" readonly><br>
+    나이<input type="number" name="memberAge" th:value="${member.memberAge}" readonly><br>
+    전화번호<input type="tel" name="memberPhone" th:value="${member.memberPhone}" id="memberPhone"><br>
+    <input type="button" onclick="update()" value="수정"><br>
+    <input type="button" onclick="updateByAjax()" value="put수정"><br>
+</form>
 </body>
+<script th:inline="javascript">
+    const updateByAjax = () => {
+        const id = [[${member.id}]];
+        const memberEmail = [[${member.memberEmail}]];
+        const memberPassword = [[${member.memberPassword}]];
+        const memberName = [[${member.memberName}]];
+        const memberAge = [[${member.memberAge}]];
+        const memberPhone = document.getElementById("memberPhone").value;
+        // json 형식으로 보냄
+        const updateData = JSON.stringify({ // json으로 변환
+            id: id,
+            memberEmail: memberEmail,
+            memberPassword: memberPassword,
+            memberName: memberName,
+            memberAge: memberAge,
+            memberPhone: memberPhone,
+        });
+        $.ajax({
+            type: "put",
+            data: updateData,
+            url: "/member/" +id,
+            contentType: "application/json", // json 형태로 보낸다는 의미
+            success: function () {
+                location.href = "/member/" + id;
+            },
+            error: function () {
+                alert("ajax 실패");
+            }
+        })
+    }
+
+    const update = () => {
+      const pw = [[${member.memberPassword}]];
+      const pwConfirm = document.getElementById("memberPassword").value;
+      if(pw == pwConfirm) {
+          updateForm.submit();
+      } else {
+          alert("비밀번호가 틀립니다!!");
+      }
+    }
+</script>
 </html>
